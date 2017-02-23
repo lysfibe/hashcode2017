@@ -2,7 +2,8 @@ const getData = require('./parse')
 const fs = require('fs-jetpack')
 
 async function exec() {
-	const [originalEndpoints, headers, sizes] = await getData()
+	const file = process.argv[2] || 'kittens'
+	const [originalEndpoints, headers, sizes] = await getData(file)
 	const caches = {}
 
 	const getCache = id => {
@@ -45,6 +46,7 @@ async function exec() {
 	const endpoints = Object.assign({}, originalEndpoints)
 
 	Object.entries(endpoints).forEach(([endpointId, endpointData]) => {
+		if (endpointData == null) return
 		const mostRequested = getMostRequested(endpointData.requests)
 		if (mostRequested.id == null) return
 		delete endpointData[mostRequested.id]
@@ -68,11 +70,16 @@ async function exec() {
 
 	let outfile = `${number}\n`
 
+	const used = new Set()
+
 	Object.entries(caches).forEach(([key, value]) => {
+		if (used.has(String(key))) return
+
 		outfile += String(key) + ' ' + value.videos.map(v => v.id).join(' ') + '\n'
+		used.add(String(key))
 	})
 
-	fs.write('answer.txt', outfile)
+	fs.write(`${file}-results.out`, outfile)
 }
 
 exec()

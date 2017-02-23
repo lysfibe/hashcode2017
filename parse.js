@@ -1,7 +1,6 @@
 const fs = require('fs-jetpack')
 
-async function exec() {
-	const file = process.argv[2] || 'kittens'
+async function exec(file) {
 	const data = fs.read('./' + file + '.in')
 	const [headers, sizes, ...rows] = data.split('\n')
 	const [noVideos, noEndpoints, noDescriptors, noServers, fileSize] = headers.split(' ')
@@ -49,7 +48,7 @@ async function exec() {
 			}
 		} else {
 			// Parsing request
-			endpoints[y].requests[x] = Number(z)
+			endpoints[y] && ( endpoints[y].requests[x] = Number(z) )
 		}
 	})
 
