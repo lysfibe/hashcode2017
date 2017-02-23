@@ -49,12 +49,18 @@ async function exec() {
 			}
 		} else {
 			// Parsing request
-			endpoints[y].requests[x] = z
+			endpoints[y].requests[x] = Number(z)
 		}
 	})
 
 	fs.write('./' + file + '.json', endpoints)
 
+
+	return [
+		endpoints,
+		{ noServers, noDescriptors, noEndpoints, noVideos, fileSize },
+		sizeList,
+	]
 }
 
-exec()
+module.exports = exec
