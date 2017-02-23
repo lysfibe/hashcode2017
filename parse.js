@@ -5,9 +5,9 @@ async function exec() {
 	const data = fs.read('./' + file + '.in')
 	const [headers, sizes, ...rows] = data.split('\n')
 	const [noVideos, noEndpoints, noDescriptors, noServers, fileSize] = headers.split(' ')
-
 	const sizeList = sizes.split(' ')
 
+	console.log('Parsing file: ...',file)
 	console.log(noVideos, 'videos')
 	console.log(noEndpoints, 'endpoints')
 	console.log(noDescriptors, 'request descriptors')
