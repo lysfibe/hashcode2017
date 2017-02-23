@@ -67,6 +67,10 @@ async function exec() {
 		}
 	})
 
+	for(i in endpoints) {
+		n = m = 0
+		console.log(i)
+	}
 
 	fs.write('./' + file + '.json', endpoints)
 
