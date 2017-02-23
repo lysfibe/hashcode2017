@@ -1,4 +1,5 @@
 const fs = require('fs-jetpack')
+const { sortBy } = require('lodash')
 
 async function exec() {
 	const file = process.argv[2] || 'kittens'
@@ -44,7 +45,10 @@ async function exec() {
 				cur += 1
 				if (total === cur) {
 					parsingRowData = false
+					// sorting connections by latency (ping)
+					endpoints[focus].connections = sortBy(endpoints[focus].connections, 'ping')
 				}
+
 			} else {
 				endpoint += 1
 				endpoints[endpoint] = { datacenter: Number(x), connections: [], requests: [] }
@@ -58,8 +62,11 @@ async function exec() {
 			endpoints[y].requests.push({requestID: x,
 				hits: z
 			})
+			// sorting requests by hits for endpoint
+			endpoints[y].requests = sortBy(endpoints[y].requests, 'hits')
 		}
 	})
+
 
 	fs.write('./' + file + '.json', endpoints)
 
