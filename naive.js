@@ -14,7 +14,6 @@ async function exec() {
 				capacity: headers.fileSize,
 				videos: [],
 			}
-			console.log(newCache)
 			caches[id] = newCache
 			return newCache
 		}
@@ -24,7 +23,7 @@ async function exec() {
 		let res = { id: null, requests: 0 }
 		Object.entries(videos).forEach(([ id, reqs ]) => {
 			if (res.requests < reqs) {
-				res = { id, requests: reqs }
+				res = { id, requests:reqs, size: sizes[id] }
 			}
 		})
 		return res
@@ -35,7 +34,7 @@ async function exec() {
 		Object.entries(caches).forEach(([id, d]) => {
 			if (d.ping < res.distance) {
 				const cache = getCache(id)
-				if (cache.capacity > size) {
+				if (Number(cache.capacity) > Number(size)) {
 					res = { id, distance: d.ping, c: cache }
 				}
 			}
@@ -48,17 +47,32 @@ async function exec() {
 	Object.entries(endpoints).forEach(([endpointId, endpointData]) => {
 		const mostRequested = getMostRequested(endpointData.requests)
 		if (mostRequested.id == null) return
-		console.log(mostRequested)
 		delete endpointData[mostRequested.id]
-		const cache = getClosestCache(mostRequested.requests, endpointData.datacenter, endpointData.connections)
-		console.log(cache)
+		const cache = getClosestCache(mostRequested.size, endpointData.datacenter, endpointData.connections)
+
 		if (cache.id != null) {
-			cache.c.videos.push(mostRequested)
-			cache.c.capacity -= mostRequested.requests
+			cache.c.videos = cache.c.videos.concat([mostRequested])
+			cache.c.capacity -= mostRequested.size
 		}
 	})
 
-	fs.write('wut.json', caches)
+	const second = Object.assign({}, caches)
+
+	Object.entries(second).forEach(([id, data]) => {
+		if (data.videos.length == 0) {
+			delete caches[id]
+		}
+	})
+
+	const number = Object.keys(caches).length
+
+	let outfile = `${number}\n`
+
+	Object.entries(caches).forEach(([key, value]) => {
+		outfile += String(key) + ' ' + value.videos.map(v => v.id).join(' ') + '\n'
+	})
+
+	fs.write('answer.txt', outfile)
 }
 
 exec()
