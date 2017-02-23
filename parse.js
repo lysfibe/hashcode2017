@@ -47,7 +47,7 @@ async function exec() {
 				}
 			} else {
 				endpoint += 1
-				endpoints[endpoint] = { datacenter: Number(x), connections: [], requests: {} }
+				endpoints[endpoint] = { datacenter: Number(x), connections: [], requests: [] }
 				focus = endpoint
 				total = Number(y)
 				cur = 0
@@ -55,7 +55,9 @@ async function exec() {
 			}
 		} else {
 			// Parsing request
-			endpoints[y].requests[x] = z
+			endpoints[y].requests.push({requestID: x,
+				hits: z
+			})
 		}
 	})
 
