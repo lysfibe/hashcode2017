@@ -21,20 +21,26 @@ async function exec() {
 	let parsingRowData = false
 
 	rows.forEach(row => {
-		const [x, y] = row.split(' ')
+		const [x, y, z] = row.split(' ')
 		// console.log(total, cur)
-		if (parsingRowData) {
-			id[focus].push({ to: Number(x), ping: Number(y) })
-			cur += 1
-			if (total === cur) {
-				parsingRowData = false
+
+		if (z == null) {
+			// Parsing block the middle block
+			if (parsingRowData) {
+				id[focus].push({ to: Number(x), ping: Number(y) })
+				cur += 1
+				if (total === cur) {
+					parsingRowData = false
+				}
+			} else {
+				id[Number(x)] = []
+				focus = Number(x)
+				total = Number(y)
+				cur = 0
+				parsingRowData = true
 			}
 		} else {
-			id[Number(x)] = []
-			focus = Number(x)
-			total = Number(y)
-			cur = 0
-			parsingRowData = true
+			// Parsing request
 		}
 	})
 
