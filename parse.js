@@ -1,5 +1,10 @@
 const fs = require('fs-jetpack')
 
+function exit() {
+	console.log('input file invalid values')
+	return()
+}
+
 async function exec() {
 	const file = process.argv[2] || 'kittens'
 	const data = fs.read('./' + file + '.in')
@@ -13,6 +18,12 @@ async function exec() {
 	console.log(noDescriptors, 'request descriptors')
 	console.log(noServers, 'cache servers')
 	console.log(fileSize, 'server size')
+
+	// guards
+	if (noVideos === 0 || noVideos > 10000 || noEndpoints === 0 || noEndpoints > 1000 || noDescriptors === 0 || noDescriptors > 1000000 || noServers === 0 || noServers > 1000 || fileSize === 0 || fileSize > 500000) {
+		console.log('input file contains invalid values.')
+		return()
+	}
 
 	let endpoints = {}
 	let videoData = {}
@@ -32,7 +43,7 @@ async function exec() {
 		// console.log(total, cur)
 
 		if (z == null) {
-			// Parsing block the middle block
+			// Parsing the middle block
 			if (parsingRowData) {
 				endpoints[focus].connections.push({ to: Number(x), ping: Number(y) })
 				cur += 1
